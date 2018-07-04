@@ -69,6 +69,15 @@ public class Sistema {
 		return cenarios.size();
 	}
 	
+	public int cadastrarCenario(String descricao, int bonus) {
+		if (bonus <= 0) {
+			throw new IllegalArgumentException("Erro no cadastro de cenario: Bonus invalido");
+		}
+		this.caixa -= bonus;
+		this.cenarios.add(new Cenario(descricao, bonus));
+		return cenarios.size();
+	}
+	
 	/**
 	 * M�todo que retorna a representa��o em string de um cen�rio especifico. 
 	 * 
@@ -144,6 +153,12 @@ public class Sistema {
 	 * @return o valor total apostado em um cen�rio espec�fico.
 	 */
 	public int valorTotalApostas(int cenario) {
+		if (cenario <= 0) {
+			throw new IllegalArgumentException("Erro na consulta do valor total de apostas: Cenario invalido");
+		}
+		if (cenario > this.cenarios.size()) {
+			throw new IllegalArgumentException("Erro na consulta do valor total de apostas: Cenario nao cadastrado");
+		}
 		return cenarios.get(cenario-1).valorTotalApostas();
 	}
 	
@@ -155,6 +170,12 @@ public class Sistema {
 	 * @return a quantidade total de apostas feita em um cen�rio espec�fico.
 	 */
 	public int totalApostas(int cenario) {
+		if (cenario <= 0) {
+			throw new IllegalArgumentException("Erro na consulta do total de apostas: Cenario invalido");
+		}
+		if (cenario > this.cenarios.size()) {
+			throw new IllegalArgumentException("Erro na consulta do total de apostas: Cenario nao cadastrado");
+		}
 		return this.cenarios.get(cenario - 1).totalApostas();
 	}
 	
@@ -179,12 +200,22 @@ public class Sistema {
 	 *            Boolean que informa se o cen�rio ocorreu ou n�o.
 	 */
 	public void fecharAposta(int cenario, boolean ocorreu) {
+		if (cenario <= 0) {
+			throw new IllegalArgumentException("Erro ao fechar aposta: Cenario invalido");
+		}
+		if (cenario > this.cenarios.size()) {
+			throw new IllegalArgumentException("Erro ao fechar aposta: Cenario nao cadastrado");
+		}
+		if (this.cenarios.get(cenario -1).getSituacao().equals(SituacoesCenarios.Finalizado_Ocorreu) || this.cenarios.get(cenario -1).getSituacao().equals(SituacoesCenarios.Finalizado_nOcorreu)) {
+			throw new IllegalArgumentException("Erro ao fechar aposta: Cenario ja esta fechado");
+		}
 		this.cenarios.get(cenario - 1).finalizarCenario(ocorreu);
-		this.caixa += (int) Math.floor((this.cenarios.get(cenario - 1).calculaCaixa() * this.taxa));
+		this.caixa += this.cenarios.get(cenario - 1).calculaCaixa() * this.taxa;
+	
 	}
 
 	/**
-	 * M�todo que retorna e calcula a quantidade de dinheiro direcionada ao caixa ap�s o fechamento de um
+	 * Método que retorna e calcula a quantidade de dinheiro direcionada ao caixa ap�s o fechamento de um
 	 * cen�rio espec�fico do sistema.
 	 * 
 	 * @param cenario
@@ -193,6 +224,15 @@ public class Sistema {
 	 *         cen�rio espec�fico.
 	 */
 	public int getCaixaCenario(int cenario) {
+		if (cenario <= 0) {
+			throw new IllegalArgumentException("Erro na consulta do caixa do cenario: Cenario invalido");
+		}
+		if (cenario > this.cenarios.size()) {
+			throw new IllegalArgumentException("Erro na consulta do caixa do cenario: Cenario nao cadastrado");
+		}
+		if (this.cenarios.get(cenario -1).getSituacao().equals(SituacoesCenarios.Nao_Finalizado)) {
+			throw new IllegalArgumentException("Erro na consulta do caixa do cenario: Cenario ainda esta aberto");
+		}
 		return (int) (this.cenarios.get(cenario - 1).calculaCaixa() * this.taxa);
 	}
 
@@ -206,8 +246,35 @@ public class Sistema {
 	 *         vencedores de um cen�rio espec�fico.
 	 */
 	public int getTotalRateioCenario(int cenario) {
-		return this.cenarios.get(cenario - 1).calculaCaixa()
-				- (int) (this.cenarios.get(cenario - 1).calculaCaixa() * this.taxa);
+		if (cenario <= 0) {
+			throw new IllegalArgumentException("Erro na consulta do total de rateio do cenario: Cenario invalido");
+		}
+		if (cenario > this.cenarios.size()) {
+			throw new IllegalArgumentException("Erro na consulta do total de rateio do cenario: Cenario nao cadastrado");
+		}
+		if (this.cenarios.get(cenario -1).getSituacao().equals(SituacoesCenarios.Nao_Finalizado)) {
+			throw new IllegalArgumentException("Erro na consulta do total de rateio do cenario: Cenario ainda esta aberto");
+		}
+		return (this.cenarios.get(cenario - 1).calculaCaixa() + this.cenarios.get(cenario - 1).getBonus()
+				- (int) (this.cenarios.get(cenario - 1).calculaCaixa() * this.taxa));
 	}
+
+	public int cadastrarApostaSeguraValor(int cenario, String apostador, int valor, String previsao,
+			int valorAssegurado, int custo) {
+		this.caixa += custo;
+		return cenarios.get(cenario - 1).cadastrarAposta(apostador, valor, previsao, valorAssegurado);
+	}
+
+	public int cadastrarApostaSeguraTaxa(int cenario, String apostador, int valor, String previsao, double taxa,
+			int custo) {
+		this.caixa += custo;
+		return cenarios.get(cenario - 1).cadastrarAposta(apostador, valor, previsao, taxa);
+	}
+
+	public int alterarSeguroValor(int cenario, int apostaAssegurada, int valor) {
+		return cenarios.get(cenario - 1).alterarSeguroValor(apostaAssegurada, valor);
+	}
+
+	
 	
 }

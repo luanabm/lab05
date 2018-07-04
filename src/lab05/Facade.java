@@ -49,6 +49,10 @@ public class Facade {
 		return sistema.cadastrarCenario(descricao);
 	}
 
+	public int cadastrarCenario(String descricao, int bonus) {
+		return sistema.cadastrarCenario(descricao, bonus);
+	}
+	
 	/**
 	 * M�todo que retorna a representa��o em string de um cen�rio especifico.
 	 * 
@@ -163,11 +167,23 @@ public class Facade {
 	public int getTotalRateioCenario(int cenario) {
 		return sistema.getTotalRateioCenario(cenario);
 	}
+	
+	public int cadastrarApostaSeguraValor(int cenario, String apostador, int valor, String previsao, int valorAssegurado, int custo) {
+		return sistema.cadastrarApostaSeguraValor(cenario, apostador, valor, previsao, valorAssegurado, custo);
+	}
+	
+	public int cadastrarApostaSeguraTaxa(int cenario, String apostador, int valor, String previsao, double taxa, int custo) {
+		return sistema.cadastrarApostaSeguraTaxa(cenario, apostador, valor, previsao, taxa, custo);
+	}
+	
+	public int alterarSeguroValor(int cenario, int apostaAssegurada, int valor) {
+		return sistema.alterarSeguroValor(cenario, apostaAssegurada, valor);
+	}
 
 	public static void main(String[] args) {
 		args = new String[] { "lab05.Facade", "acceptance_test/us1_test.txt", "acceptance_test/us2_test.txt",
-				"acceptance_test/us3_test.txt"/*, "acceptance_test/us4_test.txt", "acceptance_test/us5_test.txt",
-				"acceptance_test/us6_test.txt", "acceptance_test/us7_test.txt"*/ };
+				"acceptance_test/us3_test.txt", "acceptance_test/us4_test.txt", "acceptance_test/us5_test.txt",
+				"acceptance_test/us6_test.txt"/*, "acceptance_test/us7_test.txt"*/ };
 		EasyAccept.main(args);
 
 	}

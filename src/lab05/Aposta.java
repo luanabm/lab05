@@ -2,9 +2,9 @@ package lab05;
 
 /**
  * Classe que representa uma aposta. Cada aposta possui os atributos com um nome do apostador, um
- * valor apostado e uma previsão, e realiza métodos específicos.
+ * valor apostado e uma previsï¿½o, e realiza mï¿½todos especï¿½ficos.
  * 
- * @author Luana Barbosa de Mélo - 117210906
+ * @author Luana Barbosa de Mï¿½lo - 117210906
  *
  */
 public class Aposta {
@@ -18,29 +18,44 @@ public class Aposta {
 	 */
 	private int valorAposta;
 	/**
-	 * Atributo para armazenar a previsão da aposta.
+	 * Atributo para armazenar a previsï¿½o da aposta.
 	 */
 	private String previsao;
 	
+	private Seguro seguro;
+	
+
 	/**
 	 * Cria um "objeto" aposta a partir de um nome do apostador, um valor da aposta e uma
-	 * previsão.
+	 * previsï¿½o.
 	 * 
 	 * @param nomeApostador
 	 *            Nome do apostador.
 	 * @param valor
 	 *            Valor da aposta.
 	 * @param previsao
-	 *            Previsão da aposta.
+	 *            Previsï¿½o da aposta.
 	 */
+	
 	public Aposta(String nomeApostador, int valorAposta, String previsao) {
 		this.nomeApostador = nomeApostador;
 		this.valorAposta = valorAposta;
 		this.previsao = previsao;
+		this.seguro = new SemSeguro();
+	}
+	
+	public Aposta(String nomeApostador, int valorAposta, String previsao, int valorSeguro) {
+		this(nomeApostador, valorAposta, previsao);
+		this.seguro = new SeguroValor(valorSeguro);
+	}
+	
+	public Aposta(String nomeApostador, int valorAposta, String previsao, double taxaAssegurada) {
+		this(nomeApostador, valorAposta, previsao);
+		this.seguro = new SeguroTaxa(valorAposta, taxaAssegurada);
 	}
 	
 	/**
-	 * Método que retorna uma string com o valor da aposta em reais, para outras classes poderem acessar o atributo.
+	 * Mï¿½todo que retorna uma string com o valor da aposta em reais, para outras classes poderem acessar o atributo.
 	 * 
 	 * @return o valor da aposta em reais, no formato string.
 	 */
@@ -49,7 +64,7 @@ public class Aposta {
 	}
 	
 	/**
-	 * Método que retorna o valor da aposta, para outras classes poderem acessar o atributo.
+	 * Mï¿½todo que retorna o valor da aposta, para outras classes poderem acessar o atributo.
 	 * 
 	 * @return o valor da aposta.
 	 */
@@ -58,20 +73,28 @@ public class Aposta {
 	}
 	
 	/**
-	 * Método que retorna a previsão da aposta, para outras classes poderem acessar o atributo.
+	 * Mï¿½todo que retorna a previsï¿½o da aposta, para outras classes poderem acessar o atributo.
 	 * 
-	 * @return a previsão da aposta.
+	 * @return a previsï¿½o da aposta.
 	 */
 	public String getPrevisao() {
 		return previsao;
 	}
 	
 	/**
-	 * Método que retorna uma string com o nome do apostador, o valor da aposta em reais e a previsão feita pelo o apostador.
+	 * Mï¿½todo que retorna uma string com o nome do apostador, o valor da aposta em reais e a previsï¿½o feita pelo o apostador.
 	 * @return String 
 	 */
 	public String toString() {
-		return nomeApostador + " - R$ " + valorApostaReais() + " - " + previsao;
+		return nomeApostador + " - R$ " + valorApostaReais() + " - " + previsao + seguro.toString();
+	}
+	
+	public void alterarSeguroValor(int valorAssegurado) {
+		this.seguro = new SeguroValor(valorAssegurado);
+	}
+	
+	public void alterarSeguroTaxa(double taxa) {
+		this.seguro = new SeguroTaxa(this.valorAposta,taxa);
 	}
 	
 	
